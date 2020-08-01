@@ -6,6 +6,7 @@ import { Menu } from '../../components/navbar';
 import { MovieBase, Movie } from '../../interfaces/interfaces';
 import apikey from '../../services/apiKey';
 import { useHistory } from 'react-router-dom';
+import { isNullOrUndefined } from 'util';
 
 // Filmes e séries recomendadas
 const recommended = [
@@ -20,11 +21,12 @@ interface MovieId {
 export default function Home() {
     const [movies, setMovies] = useState<MovieBase[]>([]);
     const [search, setSearch] = useState<String>(String);
-    const [moviesInput, setMoviesInput] = useState<MovieBase[]>([]);
+    const [moviesInput, setMoviesInput] = useState([]);
     const dados: MovieBase[] = [];
     const dadosInput: MovieBase[] = [];
     const history = useHistory();
-
+    // let itemsToRender;
+    
     useEffect(() => {
         recommended.map(item => {
             api.get(`/?i=${item}&apikey=${apikey}`)
@@ -43,40 +45,34 @@ export default function Home() {
                     setMovies([...dados])
                 })
         })
-    }, [])
+    }, [recommended])
     console.log(movies);
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         const { value } = event.target;
 
         setSearch(value);
+
+        // if (moviesInput !== null) {
+        //     itemsToRender = moviesInput.map((item: MovieBase) => {
+        //         return <div key={item.imdbid}>{item.title}</div>
+        //     })
+        // } else {
+        //     itemsToRender = "Loading....";
+        // }
     }
 
-    useEffect(() => {        
+    useEffect(() => {
         api.get(`/?s=${search}&apikey=${apikey}`)
-                .then((response) => {
-                    const a = response.data.Search;
-                    console.log(typeof (response.data.Search));                   
-                    setMoviesInput(dadosInput)
-                    console.log(moviesInput);
-                    // moviesInput.map((item, i) => {                      
-                    //     console.log(item[0]);
-                    //     const objMovie = {
-                    //         title: item.title,
-                    //         year: response.data.Search.Year,
-                    //         released: response.data.Search.Released,
-                    //         runtime: response.data.Search.Runtime,
-                    //         genre: response.data.Search.Genre,
-                    //         director: response.data.Search.Director,
-                    //         poster: response.data.Search.Poster,
-                    //         imdbid: response.data.Search.imdbID
-                    //     }                
-                    //     dadosInput.push(objMovie);
-                    //     setMoviesInput(dadosInput);                
-                    // })
-                })            
-    }, [search]);
-
+            .then((response) => {                
+                let dadosT = response.data.Search;
+                setMoviesInput(dadosT);
+                console.log("Movies input", moviesInput);
+            })
+        }, [search]);
+        
+        
+       
     function handleButtonClick(index: number) {
         const { imdbid } = movies[index];
 
@@ -93,10 +89,7 @@ export default function Home() {
         <S.Body>
             <Menu funcao={handleInputChange} funcaoButton={handleButtonSearch} />
             <S.Titulo>Recomendados para você</S.Titulo>
-            <S.Content>
-                {/* {moviesInput != null ? "" : moviesInput.map((movie: MovieBase) => {
-                    return <p>{movie.title}</p>
-                })} */}
+            <S.Content>        
                 {
                     movies.map((movie: MovieBase, index) => {
                         return (
@@ -108,8 +101,8 @@ export default function Home() {
                                     <p>Lançamento: {movie.released}</p>
                                     <p>Duração: {movie.runtime}</p>
                                     <p>Gênero: {movie.genre}</p>
-                                    <p>Diretor: {movie.director}</p>
-                                </div>
+                                    <p>Diretor: {isNullOrUndefined(movie.director) ? "" : movie.director}</p>
+                                </div> 
                                 <S.Button onClick={() => handleButtonClick(index)}>Ver detalhes</S.Button>
                             </S.Card>
                         )

@@ -19,3 +19,7 @@ export interface Movie extends MovieBase {
     type: string,
     production: string
 }
+
+export interface MovieInput {
+    movies: MovieBase[]
+}

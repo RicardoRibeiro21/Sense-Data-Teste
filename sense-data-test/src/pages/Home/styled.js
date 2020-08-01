@@ -48,7 +48,11 @@ export const Content = styled.div`
     justify-content: center;    
     flex-direction: row;    
     margin: 1% 0 0 -1%;
-    background-color: #333;     
+    background-color: #333;   
+    @media(max-width: 800px) {
+        flex-direction: column;
+        align-items: center;                
+      } 
 `;
 
 export const Card = styled.div`
@@ -65,11 +69,18 @@ export const Card = styled.div`
         opacity: 0.75;
         background-color: black;
     }
+    @media(max-width: 800px) {
+        width: 60%;
+      }
 `;
 
 export const Img = styled.img`
-    width: 50%;    
+    width: 50%;  
+    @media(max-width: 800px) {
+        width: 80%;
+      }  
 `;
+
 
 export const Button = styled.button`
     border: 1px solid #333;
