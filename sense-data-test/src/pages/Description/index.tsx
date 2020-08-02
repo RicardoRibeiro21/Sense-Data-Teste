@@ -11,8 +11,9 @@ export default function Description() {
     const [movie, setMovie] = useState<Movie[]>([]);
     const dados: Movie[] = [];
 
+    // A partir do Id armazenado no local storage, retornar a descrição do filme
     useEffect(() => {
-        const movieSelected = localStorage.getItem("movie-selected");
+        const movieSelected = localStorage.getItem("search-movies");
         api.get(`/?i=${movieSelected}&apikey=${apikey}`)
             .then(response => {
                 const objMovie = {
@@ -39,6 +40,7 @@ export default function Description() {
             })
     }, [])
 
+    // Voltando para a página inicial
     function handleButton() {
         history.push('/');
     }

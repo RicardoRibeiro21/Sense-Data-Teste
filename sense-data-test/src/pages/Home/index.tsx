@@ -14,19 +14,15 @@ const recommended = [
     'tt0372784',
     'tt0944947'
 ]
-interface MovieId {
-    imdbID: string;
-}
 
 export default function Home() {
     const [movies, setMovies] = useState<MovieBase[]>([]);
     const [search, setSearch] = useState<String>(String);
     const [moviesInput, setMoviesInput] = useState([]);
-    const dados: MovieBase[] = [];
-    const dadosInput: MovieBase[] = [];
-    const history = useHistory();
-    // let itemsToRender;
-    
+    const dados: MovieBase[] = [];    
+    const history = useHistory();    
+
+    // Função principal para resgatar os filmes recomendados
     useEffect(() => {
         recommended.map(item => {
             api.get(`/?i=${item}&apikey=${apikey}`)
@@ -48,31 +44,24 @@ export default function Home() {
     }, [recommended])
     console.log(movies);
 
+    // Setando o valor digitado no input
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         const { value } = event.target;
 
-        setSearch(value);
-
-        // if (moviesInput !== null) {
-        //     itemsToRender = moviesInput.map((item: MovieBase) => {
-        //         return <div key={item.imdbid}>{item.title}</div>
-        //     })
-        // } else {
-        //     itemsToRender = "Loading....";
-        // }
+        setSearch(value);  
     }
 
+    // Console log mostrando os resultados a partir da busca pelo usuário
     useEffect(() => {
         api.get(`/?s=${search}&apikey=${apikey}`)
-            .then((response) => {                
+            .then((response) => {
                 let dadosT = response.data.Search;
                 setMoviesInput(dadosT);
                 console.log("Movies input", moviesInput);
             })
-        }, [search]);
-        
-        
-       
+    }, [search]);
+
+    // Redireciona para a página de descrição do filme selecionado
     function handleButtonClick(index: number) {
         const { imdbid } = movies[index];
 
@@ -89,7 +78,7 @@ export default function Home() {
         <S.Body>
             <Menu funcao={handleInputChange} funcaoButton={handleButtonSearch} />
             <S.Titulo>Recomendados para você</S.Titulo>
-            <S.Content>        
+            <S.Content>
                 {
                     movies.map((movie: MovieBase, index) => {
                         return (
@@ -102,7 +91,7 @@ export default function Home() {
                                     <p>Duração: {movie.runtime}</p>
                                     <p>Gênero: {movie.genre}</p>
                                     <p>Diretor: {isNullOrUndefined(movie.director) ? "" : movie.director}</p>
-                                </div> 
+                                </div>
                                 <S.Button onClick={() => handleButtonClick(index)}>Ver detalhes</S.Button>
                             </S.Card>
                         )
